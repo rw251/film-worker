@@ -2,6 +2,9 @@ name = "film-worker"
 main = "src/index.js"
 compatibility_date = "2023-10-30"
 
+# Disable the .dev html route as not needed for cron jobs
+workers_dev = false
+
 # Cron Triggers
 [triggers]
 #1 - at 11:45 every two days
