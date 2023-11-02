@@ -3,7 +3,13 @@ main = "src/index.js"
 compatibility_date = "2023-10-30"
 
 # Cron Triggers
-# Docs: https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
-# Configuration: https://developers.cloudflare.com/workers/wrangler/configuration/#triggers
 [triggers]
-crons = ["* * * * *"] # * * * * * = run every minute
+#1 - at 11:45 on every 2nd day-of-month
+#2 - at half past every 8th hour
+crons = ["45 11 */2 * *","30 */8 * * *"]
+
+# D1 Database
+[[d1_databases]]
+binding = "FILM_DB"
+database_name = "film"
+database_id = "e317e69c-1a54-4c06-b74c-eab352cc1aa4"

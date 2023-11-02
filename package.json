@@ -1,13 +1,15 @@
 {
-  "name": "film-worker",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev"
-  },
-  "devDependencies": {
-    "wrangler": "^3.0.0"
-  }
+	"name": "film-worker",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev --test-scheduled",
+		"start": "wrangler dev",
+		"db:channels": "npx wrangler d1 execute film --local --command \"SELECT * FROM channels\"",
+		"db:films": "npx wrangler d1 execute film --local --command \"SELECT * FROM films\""
+	},
+	"devDependencies": {
+		"wrangler": "^3.0.0"
+	}
 }

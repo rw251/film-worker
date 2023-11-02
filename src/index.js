@@ -1,30 +1,33 @@
-/**
- * Welcome to Cloudflare Workers!
- *
- * This is a template for a Scheduled Worker: a Worker that can run on a
- * configurable interval:
- * https://developers.cloudflare.com/workers/platform/triggers/cron-triggers/
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { go as getChannels } from './getFreeviewChannels';
+import { go as getFilms } from './getFilms';
 
 export default {
 	// The scheduled handler is invoked at the interval set in our wrangler.toml's
 	// [[triggers]] configuration.
-	async scheduled(event, env, ctx) {
-		// A Cron Trigger can make requests to other endpoints on the Internet,
-		// publish to a Queue, query a D1 Database, and much more.
-		//
-		// We'll keep it simple and make an API call to a Cloudflare API:
-		let resp = await fetch('https://api.cloudflare.com/client/v4/ips');
-		let wasSuccessful = resp.ok ? 'success' : 'fail';
 
-		// You could store this result in KV, write to a D1 Database, or publish to a Queue.
-		// In this template, we'll just log the result:
-		console.log(`trigger fired at ${event.cron}: ${wasSuccessful}`);
+	async scheduled(event, env, ctx) {
+		// Not ideal but you can have multiple cron jobs running on different schedules
+		// and select the correct one based on cron string
+		switch (event.cron) {
+			case '45 11 */2 * *':
+				// at 11:45 on every 2nd day-of-month
+				await getChannels(env);
+				break;
+			case '30 */8 * * *':
+				// at half past every 8th hour
+				await getFilms(env);
+				break;
+			default:
+				console.log('No matching cron');
+			// case "*/10 * * * *":
+			// 	// Every ten minutes
+			// 	await updateAPI2();
+			// 	break;
+			// case "*/45 * * * *":
+			// 	// Every forty-five minutes
+			// 	await updateAPI3();
+			// 	break;
+		}
+		console.log('cron processed');
 	},
 };
