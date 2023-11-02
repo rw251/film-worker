@@ -9,7 +9,7 @@ workers_dev = false
 [triggers]
 #1 - at 11:45 every two days
 #2 - at half past every 8th hour
-crons = ["45 11 */2 * *","30 */8 * * *"]
+crons = ["5 11 * * *","30 */8 * * *"]
 
 # D1 Database
 [[d1_databases]]

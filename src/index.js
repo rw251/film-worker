@@ -9,7 +9,7 @@ export default {
 		// Not ideal but you can have multiple cron jobs running on different schedules
 		// and select the correct one based on cron string
 		switch (event.cron) {
-			case '45 11 */2 * *':
+			case '5 11 * * *':
 				// at 11:45 every two days
 				await getChannels(env);
 				break;
