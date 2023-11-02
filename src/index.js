@@ -10,7 +10,7 @@ export default {
 		// and select the correct one based on cron string
 		switch (event.cron) {
 			case '45 11 */2 * *':
-				// at 11:45 on every 2nd day-of-month
+				// at 11:45 every two days
 				await getChannels(env);
 				break;
 			case '30 */8 * * *':

@@ -4,7 +4,7 @@ compatibility_date = "2023-10-30"
 
 # Cron Triggers
 [triggers]
-#1 - at 11:45 on every 2nd day-of-month
+#1 - at 11:45 every two days
 #2 - at half past every 8th hour
 crons = ["45 11 */2 * *","30 */8 * * *"]
 
