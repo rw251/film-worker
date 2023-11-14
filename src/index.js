@@ -3,6 +3,14 @@ import { go as getFilms } from './getFilms';
 import { go as notify } from './notify';
 
 export default {
+	async fetch(request, env, ctx) {
+		try {
+			await notify(env);
+			return new Response(JSON.stringify({ success: true }));
+		} catch (err) {
+			return new Response(err.message);
+		}
+	},
 	// The scheduled handler is invoked at the interval set in our wrangler.toml's
 	// [[triggers]] configuration.
 
