@@ -20,7 +20,3 @@ binding = "FILM_DB"
 database_name = "film"
 database_id = "e317e69c-1a54-4c06-b74c-eab352cc1aa4"
 
-send_email = [
-    {type = "send_email", name = "FILM_EMAIL"}
-]
-

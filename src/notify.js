@@ -40,6 +40,7 @@ async function sendEmails(apiKey, notifications) {
 		const emailPromises = emails.map((email) => sendEmail(apiKey, email));
 		console.log(`Sending ${emailPromises.length} emails`);
 		const x = await Promise.all(emailPromises);
+		console.log(x);
 	}
 }
 
