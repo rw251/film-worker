@@ -130,14 +130,28 @@ const processJson = {
 		if (!json || !json.shows || json.shows.length === 0) {
 			// throw error
 		}
-		const channels = {};
-		json.channels.forEach((channel) => {
-			channels[channel.id] = channel.name;
-		});
-		return json.shows
+		let channels = {};
+		if (json.channels.forEach) {
+			json.channels.forEach((channel) => {
+				channels[channel.id] = channel.name;
+			});
+		} else {
+			Object.keys(json.channels).forEach((c) => {
+				channels[json.channels[c].id] = json.channels[c].name;
+			});
+		}
+		let shows = [];
+		if (json.shows.forEach) {
+			shows = json.shows;
+		} else {
+			shows = Object.keys(json.shows).map((k) => {
+				return { id: k, ...json.shows[k] };
+			});
+		}
+		return shows
 			.map((show) => {
 				if (!json.films[show.f]) return false;
-				const channelId = show.channel_id || show.c;
+				const channelId = show.channel_id || show.c || show.cs[0];
 				if (!show.link && (!channelId || !channels[channelId])) return false;
 				const film = {
 					channel: channelId ? channels[channelId] : show.link, // now includes iplayer shows

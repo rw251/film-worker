@@ -7,9 +7,10 @@
 		"dev": "wrangler dev --test-scheduled",
 		"start": "wrangler dev",
 		"db:channels": "npx wrangler d1 execute film --local --command \"SELECT * FROM channels\"",
-		"db:films": "npx wrangler d1 execute film --local --command \"SELECT * FROM films\""
+		"db:films": "npx wrangler d1 execute film --local --command \"SELECT * FROM films\"",
+		"db:init": "npx wrangler d1 execute film --local --file ./db/_schema.sql"
 	},
 	"devDependencies": {
-		"wrangler": "^3.0.0"
+		"wrangler": "^3.99.0"
 	}
 }
