@@ -1,14 +1,16 @@
+import { log } from './log';
+
 async function getChannels() {
 	const formData = new FormData();
 	formData.append('postcode', 'WA12 0DE');
 	formData.append('address', '6');
 	formData.append('op', 'Check');
-	console.log(formData);
+	log('Calling freeview url channel checker...');
 	const html = await fetch('https://www.freeview.co.uk/help/coverage-checker-results', {
 		method: 'POST',
 		body: formData,
 	}).then((resp) => resp.text());
-	console.log(html.substring(0, 100));
+	log(`Start of response: ${html.substring(0, 100)}`);
 	const regexp = /fv-channel-list__channel-name"[^>]*>([^<]+)</g;
 	const channels = [];
 	for (let match of html.matchAll(regexp)) {
@@ -31,7 +33,7 @@ async function writeChannels(channels, env) {
 
 async function go(env) {
 	const channels = await getChannels();
-	console.log(`Found ${channels.length} channels`);
+	log(`Found ${channels.length} channels`);
 	if (channels && channels.length > 0) await writeChannels(channels, env);
 }
 

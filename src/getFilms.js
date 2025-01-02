@@ -1,3 +1,5 @@
+import { log } from './log';
+
 const services = {
 	// nextfilm: 'nextfilm',
 	// tvfilms: 'tvfilms',
@@ -168,15 +170,18 @@ const processJson = {
 
 async function getFilms(id) {
 	const { url, ...config } = request[service](id);
+	log('Fetching films...');
 	const htmlOrJSON = await fetch(url, config)
 		.catch(() => {
 			// Try the backup url
+			log('Error fetching films... trying the backupurl');
 			const { url2, ...config2 } = request[service](id, true);
 			return fetch(url2, config2);
 		})
 		.then((x) => x.text());
 	let films = isHtml[service] ? processHtml[service](htmlOrJSON) : processJson[service](JSON.parse(htmlOrJSON));
 	films = Array.from(films);
+	log(`${films.length} films found.`);
 	films = films
 		.filter((x) => x)
 		.forEach((film) => {
@@ -218,7 +223,7 @@ async function insertNewFilms(films, db) {
 		'INSERT INTO films (imdb, channel, time, title, year) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT(imdb) DO UPDATE SET channel=excluded.channel, time=excluded.time, title=excluded.title, year=excluded.year'
 	);
 	const batches = films.map((x) => stmt.bind(x.imdb, x.channel, x.time, x.title, x.year));
-	console.log(`About to insert/update ${films.length} films...`);
+	log(`About to insert/update ${films.length} films...`);
 	const result = await db.batch(batches);
 }
 
@@ -230,7 +235,11 @@ async function populateLookup(db) {
 	const stmtNonFilmChannels = db.prepare('SELECT * FROM nonFilmChannels');
 
 	const batch = [stmtChannels, stmtAltChannels, stmtNonFilmChannels];
+	log('Populating lookup');
 	const [resultChannels, resultAltChannelNames, resultNonFilmChannels] = await db.batch(batch);
+	log(`${resultChannels.results.length} resultChannel responses`);
+	log(`${resultAltChannelNames.results.length} resultAltChannelNames responses`);
+	log(`${resultNonFilmChannels.results.length} resultNonFilmChannels responses`);
 	channels = {};
 	resultChannels.results.forEach(({ name }) => (channels[name.toUpperCase()] = 1));
 	channels.IPLAYER = 1;
@@ -269,9 +278,9 @@ async function go(env) {
 		//console.log(Object.keys(unknown));
 		await insertNewFilms(films, db);
 	} catch (err) {
-		console.log(err);
+		log(err);
 	} finally {
-		console.log('done');
+		log('Done');
 	}
 }
 export { go };

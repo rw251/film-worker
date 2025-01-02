@@ -1,3 +1,5 @@
+import { log, getLogs } from './log';
+
 const SENDER = 'Film alert <films@rw251.com>';
 const DOMAIN = 'mg.rw251.com';
 
@@ -38,9 +40,24 @@ async function sendEmails(apiKey, notifications) {
 	const emails = createEmails(notifications);
 	if (emails && emails.length) {
 		const emailPromises = emails.map((email) => sendEmail(apiKey, email));
-		console.log(`Sending ${emailPromises.length} emails`);
+		log(`Sending ${emailPromises.length} emails`);
 		const x = await Promise.all(emailPromises);
 	}
+}
+
+function escapeHtml(unsafe) {
+	return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+async function sendLogs(env) {
+	const logs = await getLogs(env);
+	const email = constructEmail(
+		env.MY_EMAIL,
+		'Film alert logs',
+		`${logs.map((x) => `${x.timestamp}: ${escapeHtml(x.message)}`).join(', ')}`,
+		`<table>${logs.map((x) => `<tr><td>${x.timestamp}:</td><td>${escapeHtml(x.message)}</td></tr>`).join('')}</table>`
+	);
+	await sendEmail(env.MAILGUN_API_KEY, email);
 }
 
 async function getNotifications(apiKey, db) {
@@ -68,4 +85,4 @@ async function go(env) {
 	await getNotifications(env.MAILGUN_API_KEY, db);
 }
 
-export { go };
+export { go, sendLogs };
